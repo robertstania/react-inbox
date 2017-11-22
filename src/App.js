@@ -14,6 +14,7 @@ class App extends Component {
   }
 
   /*GET Request using Async/Await Syntax*/
+  //get - retreive
   async componentDidMount() {
     let serverResponse = await Promise.all([
       axios.get(`http://localhost:8000/messages`)
@@ -30,18 +31,22 @@ class App extends Component {
   }
 
   /*POST Request using Async/Await Syntax*/
-  async itemsAdded() {
-    let serverResponse = await ([
-      axios.post(`http://localhost:8000/messages`)
-    ]);
-    let messages = serverResponse[0].data
-    messages.map(message => {
-         if(message.id === message) {
-         }
-         return message;
-       })
+  //post - add to
+  //put/patch - update
+  //delete - remove
+  async itemsAdded(message) {
+    let newMessage = {
+      ... message,
+      labels: JSON.stringify([]),
+      read: false,
+      starred: false,
+      selected: false
+    }
+    let serverResponse = await axios.post(`http://localhost:8000/messages`, newMessage);
+    let messages = serverResponse.data
+    console.log('this:', this)
       this.setState({
-        messages
+        message: messages
       })
   }
 
@@ -82,13 +87,12 @@ class App extends Component {
     this.setState({ messages: originalMessages.concat(updatedMessages).sort((a, b) => a.id - b.id)})
   }
 
-  composeFormButtonFunc = (type) => {
+  toggleComposeForm = (type) => {
     console.log('type', type)
     this.setState({
       showForm: !this.state.showForm
     })
   }
-
 
   selectButtonFunc = (type) => {
     console.log('type', type)
@@ -170,7 +174,7 @@ class App extends Component {
         <Toolbar
           numOfSelectedMsgs={numOfSelectedMsgs}
           messages={this.state.messages}
-          composeFormButtonFunc={this.composeFormButtonFunc}
+          toggleComposeForm={this.toggleComposeForm}
           showForm={this.state.showForm}
           selectButtonFunc={this.selectButtonFunc}
           setUnreadFunc={this.setUnreadFunc}
@@ -178,7 +182,9 @@ class App extends Component {
           deleteMessages={this.deleteMessages}
           addLabel={this.addLabel}
           removeLabel={this.removeLabel}
+          itemsAdded={this.itemsAdded}
         />
+
         <MessageList
           messages={this.state.messages}
           toggleRead={this.toggleRead}
