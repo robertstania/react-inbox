@@ -34,7 +34,7 @@ class App extends Component {
   //post - add to
   //put/patch - update
   //delete - remove
-  async itemsAdded(message) {
+  itemsAdded = async (message) => {
     let newMessage = {
       ... message,
       labels: JSON.stringify([]),
@@ -44,9 +44,9 @@ class App extends Component {
     }
     let serverResponse = await axios.post(`http://localhost:8000/messages`, newMessage);
     let messages = serverResponse.data
-    console.log('this:', this)
       this.setState({
-        message: messages
+        messages,
+        showForm: false
       })
   }
 
